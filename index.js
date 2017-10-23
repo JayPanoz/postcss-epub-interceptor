@@ -53,7 +53,9 @@ module.exports = postcss.plugin("postcss-epub-interceptor", function(opts) {
 
 				/* If text-transform */
 				if (decl.value === "-epub-fullwidth" && decl.prop === "text-transform") {
-					if (decl.parent.some(x => x.prop !== "text-transform" && x.value !== "full-width")) {
+					var hasTextTranform = decl.parent.some(x => x.prop === "text-transform" && x.value === "full-width");
+
+					if (!hasTextTranform) {
 						decl.cloneAfter({
 							prop: "text-transform",
 							value: "full-width"
