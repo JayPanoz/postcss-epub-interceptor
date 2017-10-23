@@ -36,25 +36,25 @@ If you need to prefix those properties, please use [autoprefixer](https://github
 ```css
 
 .text-1 {
-	-epub-hyphens: auto;
-	-epub-line-break: normal;
-	-epub-text-align-last: center;
-	-epub-word-break: break-all;
-	text-transform: -epub-fullsize-kana; 
+  -epub-hyphens: auto;
+  -epub-line-break: normal;
+  -epub-text-align-last: center;
+  -epub-word-break: break-all;
+  text-transform: -epub-fullsize-kana; 
 }
 
 .text-2 {
-	-epub-hyphens: none;
-	hyphens: none;
-	text-align-last: center;
-	-epub-word-break: break-all;
-	word-break: break-all;
+  -epub-hyphens: none;
+  hyphens: none;
+  text-align-last: center;
+  -epub-word-break: break-all;
+  word-break: break-all;
   text-transform: -epub-fullwidth;	
 }
 
 .text-3 {
-	text-transform: -epub-fullwidth;
-	text-transform: full-width;
+  text-transform: -epub-fullwidth;
+  text-transform: full-width;
 }
 ```
 
@@ -63,30 +63,30 @@ If you need to prefix those properties, please use [autoprefixer](https://github
 ```css
 
 .text-1 {
-	-epub-hyphens: auto;
-	hyphens: auto;
-	-epub-line-break: normal;
-	line-break: normal;
-	-epub-text-align-last: center;
-	text-align-last: center;
-	-epub-word-break: break-all;
-	word-break: break-all;
-	text-transform: -epub-fullsize-kana; 
+  -epub-hyphens: auto;
+  hyphens: auto;
+  -epub-line-break: normal;
+  line-break: normal;
+  -epub-text-align-last: center;
+  text-align-last: center;
+  -epub-word-break: break-all;
+  word-break: break-all;
+  text-transform: -epub-fullsize-kana; 
 }
 
 .text-2 {
-	-epub-hyphens: none;
-	hyphens: none;
-	text-align-last: center;
-	-epub-word-break: break-all;
-	word-break: break-all;
+  -epub-hyphens: none;
+  hyphens: none;
+  text-align-last: center;
+  -epub-word-break: break-all;
+  word-break: break-all;
   text-transform: -epub-fullwidth;
   text-transform: full-width;	
 }
 
 .text-3 {
-	text-transform: -epub-fullwidth;
-	text-transform: full-width;
+  text-transform: -epub-fullwidth;
+  text-transform: full-width;
 }
 ```
 
