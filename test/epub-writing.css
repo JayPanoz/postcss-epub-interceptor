@@ -1,0 +1,28 @@
+.writing-mode-1 {
+	-epub-writing-mode: vertical-lr;
+	-epub-text-orientation: rotate-right;
+	-epub-text-combine-horizontal: all;
+}
+
+.writing-mode-2 {
+	-epub-writing-mode: vertical-rl;
+	-epub-text-orientation: vertical-right;
+	-epub-text-combine-upright: all;
+}
+
+.writing-mode-3 {
+	-epub-writing-mode: horizontal-tb;
+	-epub-text-orientation: sideways;
+	-epub-text-combine-horizontal: all;
+	text-combine-upright: all;	
+}
+
+.writing-mode-4 {
+	-epub-writing-mode: horizontal-tb;
+	writing-mode: horizontal-tb;
+	-epub-text-orientation: mixed;
+}
+
+.writing-mode-5 {
+	-epub-text-orientation: upright;
+}
