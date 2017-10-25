@@ -64,7 +64,7 @@ module.exports = postcss.plugin("postcss-epub-interceptor", function(opts) {
 
             if (mapping.multipleVals) {
               var subIdx = mapping.multipleVals.findIndex(z => z.epubVal === currentValue);
-              newValue = mapping.multipleVals[subIdx].stdVal;
+              subIdx >= 0 ? newValue = mapping.multipleVals[subIdx].stdVal : newValue = currentValue;
             } else if (mapping.stdVal) {
               newValue = mapping.stdVal;
             } else {
