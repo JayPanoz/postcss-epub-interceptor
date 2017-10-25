@@ -1,0 +1,19 @@
+.text-decoration-1 {
+	-epub-text-emphasis: red triangle;
+	text-emphasis: red triangle;
+	-epub-text-emphasis-color: red;
+	text-emphasis-color: red;
+	-epub-text-emphasis-style: triangle;
+	text-emphasis-style: triangle;
+	-epub-text-emphasis-position: under;
+	text-emphasis-position: under;
+	-epub-text-underline-position: alphabetic;
+	text-underline-position: auto;
+}
+
+.text-decoration-2 {
+	-epub-text-emphasis-color: red;
+	text-emphasis-color: red;
+	text-emphasis-style: triangle;
+	text-underline-position: auto;
+}

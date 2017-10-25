@@ -2,42 +2,32 @@
 
 var postcss = require("postcss"),
 
-		/* Properties to check */
-		epubProps = [
-			/* epub text */
-			"-epub-hyphens",
-			"-epub-line-break",
-			"-epub-text-align-last",
-			"-epub-word-break",
-
-			/* epub text decoration */
-			"-epub-text-emphasis",
-			"-epub-text-emphasis-color",
-			"-epub-text-emphasis-style",
-			"-epub-text-emphasis-position",
-			"-epub-text-underline-position",
-			
-			/* epub writing modes */
-			"-epub-writing-mode",
-			"-epub-text-orientation",
-			"-epub-text-combine",
-			"-epub-text-combine-horizontal",
-			"-epub-text-combine-upright",
-
-			/* Ruby */
-			"-epub-ruby-position"
-		],
-
-		/* For some props, we need to change the prop/value as well */
-		mappings = [
-			{epubProp: "-epub-text-underline-position", epubVal: "alphabetic", stdVal: "auto"},
-			{epubProp: "-epub-text-orientation", epubVal: "vertical-right", stdVal: "mixed"},
-			{epubProp: "-epub-text-orientation", epubVal: "sideways-right", stdVal: "sideways"},
-			{epubProp: "-epub-text-orientation", epubVal: "rotate-right", stdVal: "sidaways"},
-			{epubProp: "-epub-text-orientation", epubVal: "rotate-normal", stdVal: "sideways"},
-			{epubProp: "-epub-text-combine", epubVal: "horizontal", stdProp: "text-combine-upright", stdVal: "all"},
-			{epubProp: "-epub-text-combine-horizontal", epubVal: "all", stdProp: "text-combine-upright"}
-		];
+    mappings = [
+      {epubProp: "text-transform", unpref: true, epubVal: "-epub-fullwidth", stdVal: "full-width"},
+      {epubProp: "-epub-hyphens"},
+      {epubProp: "-epub-line-break"},
+      {epubProp: "-epub-text-align-last"},
+      {epubProp: "-epub-word-break"},
+      {epubProp: "-epub-text-emphasis"},
+      {epubProp: "-epub-text-emphasis-color"},
+      {epubProp: "-epub-text-emphasis-style"},
+      {epubProp: "-epub-text-emphasis-position"},
+      {epubProp: "-epub-text-underline-position", epubVal: "alphabetic", stdVal: "auto"},
+      {epubProp: "-epub-ruby-position"},
+      {epubProp: "-epub-writing-mode"},
+      {epubProp: "-epub-text-orientation", multipleVals: [
+        {epubVal: "upright", stdVal: "upright"},
+        {epubVal: "mixed", stdVal: "mixed"},
+        {epubVal: "vertical-right", stdVal: "mixed"},
+        {epubVal: "sideways", stdVal: "sideways"},
+        {epubVal: "sideways-right", stdVal: "sideways"},
+        {epubVal: "rotate-right", stdVal: "sideways"},
+        {epubVal: "rotate-normal", stdVal: "sideways"}
+      ]},
+      {epubProp: "-epub-text-combine", epubVal: "horizontal", stdProp: "text-combine-upright", stdVal: "all"},
+      {epubProp: "-epub-text-combine-horizontal", epubVal: "all", stdProp: "text-combine-upright"},
+      {epubProp: "-epub-text-combine-upright"}     
+    ];
 
 module.exports = postcss.plugin("postcss-epub-interceptor", function(opts) {
 	opts = opts || {};
@@ -47,77 +37,49 @@ module.exports = postcss.plugin("postcss-epub-interceptor", function(opts) {
 	 * @param {Object} css
 	 */
 
-	return function(css) {
-		css.walkDecls(function(decl) {
-			if (decl.value) {
+  return function(css) {
+    css.walkDecls(function(decl) {
+      if (decl.value) {
+        var currentProp = decl.prop,
+            currentValue = decl.value,
+            idx = mappings.findIndex(x => x.epubProp === currentProp),
+            mapping = mappings[idx];
+        
+        if (idx >= 0) {
+          var hasUnprefixed = true;
 
-				/* If text-transform */
-				if (decl.value === "-epub-fullwidth" && decl.prop === "text-transform") {
-					var hasTextTransform = decl.parent.some(x => x.prop === "text-transform" && x.value === "full-width");
+          if (!mapping.unpref) {
+            var unprefixedProp;
+            mapping.stdProp ? unprefixedProp = mapping.stdProp : unprefixedProp = currentProp.replace(/-epub-/i, "");
+            hasUnprefixed = decl.parent.some(y => y.prop === unprefixedProp);
+          } else if (mapping.unpref && mapping.epubVal === currentValue) {
+            var unprefixedProp = currentProp,
+                unprefixedValue = mapping.stdVal,
+                hasUnprefixed = decl.parent.some(y => y.prop === unprefixedProp && y.value === unprefixedValue);
+          }
 
-					if (!hasTextTransform) {
-						decl.cloneAfter({
-							prop: "text-transform",
-							value: "full-width"
-						});
-					}
-				}
-				
-				/* If declaration property in the list */
-				 else if (epubProps.indexOf(decl.prop) >= 0) {
+          if (!hasUnprefixed) {
+            var newProp = unprefixedProp,
+                newValue;
 
-					/* Check if the unprefixed property already exists */					
-					if (decl.prop === "-epub-text-combine-horizontal" || decl.prop === "-epub-text-combine") {
-						var unprefixedProp = "text-combine-upright";
-					} else {
-						var unprefixedProp = decl.prop.replace(/-epub-/i, "");
-					}
+            if (mapping.multipleVals) {
+              var subIdx = mapping.multipleVals.findIndex(z => z.epubVal === currentValue);
+              newValue = mapping.multipleVals[subIdx].stdVal;
+            } else if (mapping.stdVal) {
+              newValue = mapping.stdVal;
+            } else {
+              newValue = currentValue;
+            }
 
-					var hasUnprefixed = decl.parent.some(y => y.prop === unprefixedProp);
-
-					/* If the unprefixed prop doesn’t exist */
-					if (!hasUnprefixed) {
-
-						/* Check if we have to change the value for this prop as well */
-						var idx = mappings.findIndex(z => z.epubVal === decl.value && z.epubProp === decl.prop);
-					
-						/* If we have to change the value and/or prop */
-						if (idx >= 0) {
-
-							/* If we have to change the prop */
-							if (mappings[idx].stdProp) {
-								
-								/* And the value as well */
-								if (mappings[idx].stdVal) {
-									decl.cloneAfter({
-										prop: mappings[idx].stdProp,
-										value: mappings[idx].stdVal
-									});
-								} else {
-									decl.cloneAfter({
-										prop: mappings[idx].stdProp
-									});
-								}
-							} else {
-
-							/* Clone the epub-prop to add the unprefixed one and the new value */
-								decl.cloneAfter({
-									prop: unprefixedProp,
-									value: mappings[idx].stdVal
-								});
-							}
-						} else {
-
-							/* Clone the epub-prop to add the unprefixed one */
-							decl.cloneAfter({
-								prop: unprefixedProp
-							});
-						}
-					}
-				}
-			}
-		});
-	};
+            decl.cloneAfter({
+              prop: newProp,
+              value: newValue
+            });
+          }
+        }
+      }
+    });
+  }
 });
 
 // If you need to prefix properties, use the autoprefixer plugin
