@@ -24,8 +24,8 @@ var postcss = require("postcss"),
 			"-epub-text-combine-horizontal",
 			"-epub-text-combine-upright",
 
-			/* */
-			"epub-ruby-position"
+			/* Ruby */
+			"-epub-ruby-position"
 		],
 
 		/* For some props, we need to change the prop/value as well */
